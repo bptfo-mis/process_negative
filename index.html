@@ -182,7 +182,7 @@ function replace_none(value, data, type, params, column){
         str = v.join(" ");
         //str = value.replace(/<br>/g, "\n----------------\n");
     }
-    return value;
+    return str;
 }
 
 var table_update = new Tabulator("#update-table", {
@@ -227,7 +227,7 @@ document.getElementById("file-email-bin").addEventListener("click", function(){
         var tmp = tb_1[id]["FINDINGS/\nREASON"] ?  tb_1[id]["FINDINGS/\nREASON"] + "<br>" : '';
         var hold_on = tb_1[id]["HOLD DATE"] ?  tb_1[id]["HOLD DATE"] + "<br>" : '';
         
-        value["FINDINGS/\nREASON"] = tmp + "" +  value["OFFICE"] +" -- " + value["FINDINGS/\nREASON"];
+        value["FINDINGS/\nREASON"] = tmp + "" +  value["OFFICE"] +" --- " + value["FINDINGS/\nREASON"];
         value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
         value["OFFICE"] = tmp_office + "" + value["OFFICE"];
          
