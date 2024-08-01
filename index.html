@@ -1,0 +1,350 @@
+<link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+<script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
+<h2>Negative List Processing</h2>
+<div>
+    <button id="file-one-trigger">Select Negative List</button>
+</div>
+
+<div id="one-table"></div>
+<br>
+<div>
+    <button id="file-process-trigger">PROCESS PER OFFICE</button>
+
+    <button id="file-process-bin">PROCESS PER BIN</button> 
+    
+    <button id="file-email-bin">PROCESS FOR EMAIL</button>
+</div>
+
+<div id="update-table"></div>
+<div>
+    <button id="download-csv">Download CSV</button>
+    <button id="download-xls">Download XLS</button>
+    <button id="download-json">Download JSON</button>
+</div>
+<Script>
+    //Build Tabulator
+var table_one = new Tabulator("#one-table", {
+    height:311,
+    layout:"fitColumns",
+    autoColumns:true,
+    placeholder:"Awaiting Data, Master File",
+    pagination:"local",
+    paginationSize:6,
+    paginationSizeSelector:[10, 50, 100, 500],
+    movableColumns:true,
+    paginationCounter:"rows",
+    nestedFieldSeparator:"|",
+    autoColumnsDefinitions:function(definitions){
+        //definitions - array of column definition objects
+        definitions.forEach((column) => {
+            column.headerFilter = true; // add header filter to every column
+        });
+
+        return definitions;
+    },
+});
+
+function formatNumber(input) {
+
+    var parts = input.replace("-", '');
+    if (parts.length !== 11) {
+        throw new Error('Input format is incorrect. Expected format: XX-XXXXXXXXX');
+    }
+    
+    const yearPart = parts.substring(0, 4); 
+    const serialNumberPart = parts.substr(4);    
+    const formattedNumber = `${yearPart}-${serialNumberPart}`;
+    
+    return formattedNumber;
+}
+
+function customCSV(input){
+        var data = [],
+		row = 0, 
+		col = 0,
+		inQuote = false;
+	    
+		//Iterate over each character
+		for (let index = 0; index < input.length; index++) {
+			let char = input[index], 
+			nextChar = input[index+1];      
+	        
+			//Initialize empty row
+			if(!data[row]){
+				data[row] = [];
+			}
+
+			//Initialize empty column
+			if(!data[row][col]){
+				data[row][col] = "";
+			}
+	        
+			//Handle quotation mark inside string
+			if (char == '"' && inQuote && nextChar == '"') { 
+				data[row][col] += char; 
+				index++;
+				continue; 
+			}
+	        
+			//Begin / End Quote
+			if (char == '"') { 
+				inQuote = !inQuote;
+				continue;
+			}
+	        
+			//Next column (if not in quote)
+			if (char == ',' && !inQuote) { 
+				col++;
+				continue; 
+			}
+	        
+			//New row if new line and not in quote (CRLF) 
+			if (char == '\r' && nextChar == '\n' && !inQuote) { 
+				col = 0; 
+				row++; 
+				index++; 
+				continue; 
+			}
+	        
+			//New row if new line and not in quote (CR or LF) 
+			if ((char == '\r' || char == '\n') && !inQuote) { 
+				col = 0;
+				row++;
+				continue; 
+			}        
+            
+            
+
+			//Normal Character, append to column
+			data[row][col] += char;
+		}
+
+        var table =[];
+        var row_counter =0;
+
+        for (const value of data) {
+            // if(row_counter == 8) {
+            //     // value[1] = "No.";
+            //     // value[3] = "Z";
+            //     // value[6] = "X";
+            //     // value[11] = "Y"; 
+            //     // value[12] = "ACTION"; 
+            //     // value[13] = "REMARKS"; 
+            // }
+
+            if(value[2] == '') {
+                row_counter++;
+                continue;
+            }
+
+            if(row_counter >= 9){
+                value[2] = formatNumber(value[2]);
+            }
+
+            table.push(value);
+            row_counter++;
+        }
+
+
+        
+    return (table);
+}
+//trigger AJAX load on "Load Data via AJAX" button click
+document.getElementById("file-one-trigger").addEventListener("click", function(){
+    table_one.import(customCSV, ".csv");
+});
+
+function replace_newline(value, data, type, params, column){
+    var str = '';
+    if(value){
+        var v = value.split("<br>");
+        counter =1;
+        for (var i = 0; i < v.length; i++){
+            v[i] = counter + " - " + v[i] + "\n----------------\n";
+            counter++;
+        }
+        str = v.join(" ");
+        //str = value.replace(/<br>/g, "\n----------------\n");
+    }
+    return str;
+}
+
+function replace_none(value, data, type, params, column){
+    var str = '';
+    if(value){
+        var v = value.split("<br>");
+        counter =1;
+        for (var i = 0; i < v.length; i++){
+            v[i] = counter + " - " + v[i] + "<br>----------------<br>";
+            counter++;
+        }
+        str = v.join(" ");
+        //str = value.replace(/<br>/g, "\n----------------\n");
+    }
+    return value;
+}
+
+var table_update = new Tabulator("#update-table", {
+    height:311,
+    layout:"fitColumns",
+    autoColumns:true,
+    placeholder:"Awaiting Data, Updated File",
+    pagination:"local",
+    paginationSize:6,
+    paginationSizeSelector:[10, 50, 100, 500],
+    movableColumns:true,
+    paginationCounter:"rows",
+    nestedFieldSeparator:"|",
+    autoColumnsDefinitions:function(definitions){
+
+
+        //definitions - array of column definition objects
+        definitions.forEach((column) => {
+            column.headerFilter = true; 
+            if(column.field == "HOLD DATE" || column.field == 'FINDINGS/\nREASON' ||  column.field == 'RELEASED DATE' ||  column.field == 'OFFICE'){
+                column.formatter = "html";
+            }
+
+        });
+
+        return definitions;
+    },
+});
+
+document.getElementById("file-email-bin").addEventListener("click", function(){
+    var table_1 = table_one.getData();
+   var tb_1 = {};
+   var master_tb = [];
+    for (const value of table_1) {
+        var yr_id = value['ACCOUNT NO.'] || value['ACCOUNT NO.'] || '';
+        var id = yr_id.trim();
+        if(!tb_1[id]){
+            tb_1[id] = [];
+        }
+
+        var tmp_office = tb_1[id]["OFFICE"] ?  tb_1[id]["OFFICE"]: '';
+        var tmp = tb_1[id]["FINDINGS/\nREASON"] ?  tb_1[id]["FINDINGS/\nREASON"] + "<br>" : '';
+        var hold_on = tb_1[id]["HOLD DATE"] ?  tb_1[id]["HOLD DATE"] + "<br>" : '';
+        
+        value["FINDINGS/\nREASON"] = tmp + "" +  value["OFFICE"] +" -- " + value["FINDINGS/\nREASON"];
+        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
+        value["OFFICE"] = tmp_office + "" + value["OFFICE"];
+         
+        tb_1[id] = value;
+
+    }
+    master_tb = Object.values(tb_1);
+    table_update.setData(master_tb);
+
+    table_update.updateColumnDefinition("HOLD DATE", {accessorDownload:replace_none})
+    .then(function(column){
+    console.log("sample",column);
+        //column - column component for the updated column;
+    })
+    .catch(function(error){
+        console.log("error",error);
+        //handle column update error
+    });
+    table_update.updateColumnDefinition("FINDINGS/\nREASON", {accessorDownload:replace_none});
+    table_update.updateColumnDefinition("OFFICE", {accessorDownload:replace_none});
+
+});
+
+document.getElementById("file-process-bin").addEventListener("click", function(){
+    var table_1 = table_one.getData();
+   var tb_1 = {};
+   var master_tb = [];
+    for (const value of table_1) {
+        var yr_id = value['ACCOUNT NO.'] || value['ACCOUNT NO.'] || '';
+        var id = yr_id.trim();
+        if(!tb_1[id]){
+            tb_1[id] = [];
+        }
+        var tmp = tb_1[id]["FINDINGS/\nREASON"] ?  tb_1[id]["FINDINGS/\nREASON"] + "<br>" : '';
+        var tmp_office = tb_1[id]["OFFICE"] ?  tb_1[id]["OFFICE"] + "<br>" : '';
+        var hold_on = tb_1[id]["HOLD DATE"] ?  tb_1[id]["HOLD DATE"] + "<br>" : '';
+        var released_date = tb_1[id]["RELEASED DATE"] ?  tb_1[id]["RELEASED DATE"] + "<br>" : '';
+       // var yearCovered = tb_1[id]["YEAR COVERED"] ?  tb_1[id]["YEAR COVERED"] : value["RELEASED DATE"];
+       // var temp_release = !!value["RELEASED DATE"] ? value["RELEASED DATE"] : '';
+        
+        value["FINDINGS/\nREASON"] = tmp + "" + value["FINDINGS/\nREASON"];
+        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
+        value["OFFICE"] = tmp_office + "" + value["OFFICE"];
+        
+        if (!!value["RELEASED DATE"]) {
+            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["RELEASED DATE"])
+                ? value["YEAR COVERED"]
+                : value["RELEASED DATE"];
+        }else{
+            value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
+        }
+
+        //value['YEAR COVERED'] = (tb_1[id]["YEAR COVERED"] >= value["RELEASED DATE"]) ? tb_1[id]["YEAR COVERED"] : value["RELEASED DATE"]; //tb_1[id]["YEAR COVERED"] && (tb_1[id]["YEAR COVERED"] >= value["RELEASED DATE"]) ?  value["YEAR COVERED"]  : value["RELEASED DATE"];
+        value["RELEASED DATE"] = released_date + "" + value["RELEASED DATE"];
+         
+        tb_1[id] = value;
+
+    }
+
+    master_tb = Object.values(tb_1);
+    table_update.setData(master_tb);
+    table_update.updateColumnDefinition("HOLD DATE", {accessorDownload:replace_newline});
+    table_update.updateColumnDefinition("FINDINGS/\nREASON", {accessorDownload:replace_newline});
+    table_update.updateColumnDefinition("OFFICE", {accessorDownload:replace_newline});
+    table_update.updateColumnDefinition("RELEASED DATE", {accessorDownload:replace_newline});
+
+
+});
+
+document.getElementById("file-process-trigger").addEventListener("click", function(){
+   var table_1 = table_one.getData();
+   var tb_1 = {};
+   var master_tb = [];
+    for (const value of table_1) {
+        var yr_id = value['ACCOUNT NO.'] || value['ACCOUNT NO.'] || '';
+        var serial = value['OFFICE'] || value['OFFICE'] || '';
+        var id = yr_id.trim() + "_" + serial.trim();
+        if(!tb_1[id]){
+            tb_1[id] = [];
+        }
+        var tmp = tb_1[id]["FINDINGS/\nREASON"] ?  tb_1[id]["FINDINGS/\nREASON"] + "<br>" : '';
+        var hold_on = tb_1[id]["HOLD DATE"] ?  tb_1[id]["HOLD DATE"] + "<br>" : '';
+        var released_date = tb_1[id]["RELEASED DATE"] ?  tb_1[id]["RELEASED DATE"] + "<br>" : '';
+        value["FINDINGS/\nREASON"] = tmp + "" + value["FINDINGS/\nREASON"];
+        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
+        value["RELEASED DATE"] = released_date + "" + value["RELEASED DATE"];
+
+         
+        tb_1[id] = value;
+
+    }
+
+    master_tb = Object.values(tb_1);
+    table_update.setData(master_tb);
+    table_update.updateColumnDefinition("HOLD DATE", {accessorDownload:replace_newline});
+    table_update.updateColumnDefinition("FINDINGS/\nREASON", {accessorDownload:replace_newline});
+    table_update.updateColumnDefinition("OFFICE", {accessorDownload:replace_newline});
+    table_update.updateColumnDefinition("RELEASED DATE", {accessorDownload:replace_newline});
+
+
+});
+
+
+
+//trigger download of data.csv file
+document.getElementById("download-xls").addEventListener("click", function(){
+    table_update.download("xlsx", "data.xlsx", {sheetName:"Data"});
+});
+
+document.getElementById("download-csv").addEventListener("click", function(){
+    table_update.download("csv", "data.csv", {bom:true});
+});
+
+//trigger download of data.json file
+document.getElementById("download-json").addEventListener("click", function(){
+    table_update.download("json", "data.json");
+});
+
+
+</Script>
