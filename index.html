@@ -46,7 +46,7 @@ var table_one = new Tabulator("#one-table", {
 });
 
 function formatNumber(input) {
-
+    console.log(input);
     var parts = input.replace("-", '');
     if (parts.length !== 11) {
         throw new Error('Input format is incorrect. Expected format: XX-XXXXXXXXX');
