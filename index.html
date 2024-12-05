@@ -47,6 +47,7 @@ var table_one = new Tabulator("#one-table", {
 
 function formatNumber(input) {
     console.log(input);
+    input = input.replace(/^\s+|\s+$/gm,'');
     var parts = input.replace("-", '');
     if (parts.length !== 11) {
         throw new Error('Input format is incorrect. Expected format: XX-XXXXXXXXX');
@@ -133,7 +134,7 @@ function customCSV(input){
             //     // value[13] = "REMARKS"; 
             // }
 
-            if(value[2] == '') {
+            if(value[3] == '') {
                 row_counter++;
                 continue;
             }
