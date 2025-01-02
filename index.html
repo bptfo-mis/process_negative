@@ -46,7 +46,6 @@ var table_one = new Tabulator("#one-table", {
 });
 
 function formatNumber(input) {
-    console.log(input);
     input = input.replace(/^\s+|\s+$/gm,'');
     var parts = input.replace("-", '');
     if (parts.length !== 11) {
@@ -123,7 +122,6 @@ function customCSV(input){
 
         var table =[];
         var row_counter =0;
-	console.log(data);
         for (const value of data) {
             // if(row_counter == 8) {
             //     // value[1] = "No.";
@@ -134,7 +132,7 @@ function customCSV(input){
             //     // value[13] = "REMARKS"; 
             // }
 
-            if(value[3] == '') {
+            if(value[2] == '') {
                 row_counter++;
                 continue;
             }
