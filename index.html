@@ -314,6 +314,13 @@ document.getElementById("file-process-trigger").addEventListener("click", functi
         value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
         value["RELEASED DATE"] = released_date + "" + value["RELEASED DATE"];
 
+        if (!!value["RELEASED DATE"]) {
+            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["RELEASED DATE"])
+                ? value["YEAR COVERED"]
+                : value["RELEASED DATE"];
+        }else{
+            value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
+        }
          
         tb_1[id] = value;
 
