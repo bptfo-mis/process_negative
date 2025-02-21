@@ -227,11 +227,12 @@ document.getElementById("file-email-bin").addEventListener("click", function(){
         var hold_on = tb_1[id]["HOLD DATE"] ?  tb_1[id]["HOLD DATE"] + "<br>" : '';
         
         value["FINDINGS/\nREASON"] = tmp + "" +  value["OFFICE"] +" --- " + value["FINDINGS/\nREASON"];
-	    
  	if (!!value["HOLD DATE"]) {
-            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
+		const dateString = value["HOLD DATE"];
+		const holdyear = dateString.split('/')[2];
+            	value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= holdyear)
                 ? value["YEAR COVERED"]
-                : value["HOLD DATE"];
+                : holdyear;
         }else{
             value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
@@ -279,9 +280,11 @@ document.getElementById("file-process-bin").addEventListener("click", function()
         value["FINDINGS/\nREASON"] = tmp + "" + value["FINDINGS/\nREASON"];
 
 	if (!!value["HOLD DATE"]) {
-            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
+          	const dateString = value["HOLD DATE"];
+		const holdyear = dateString.split('/')[2];
+            	value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= holdyear)
                 ? value["YEAR COVERED"]
-                : value["HOLD DATE"];
+                : holdyear;
         }else{
             value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
@@ -323,9 +326,11 @@ document.getElementById("file-process-trigger").addEventListener("click", functi
         value["FINDINGS/\nREASON"] = tmp + "" + value["FINDINGS/\nREASON"];
 	    
  	if (!!value["HOLD DATE"]) {
-            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
+            	const dateString = value["HOLD DATE"];
+		const holdyear = dateString.split('/')[2];
+            	value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= holdyear)
                 ? value["YEAR COVERED"]
-                : value["HOLD DATE"];
+                : holdyear;
         }else{
             value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
