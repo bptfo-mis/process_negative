@@ -231,11 +231,11 @@ document.getElementById("file-email-bin").addEventListener("click", function(){
         value["OFFICE"] = tmp_office + "" + value["OFFICE"];
             
 	if (!!value["RELEASED DATE"]) {
-            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["RELEASED DATE"])
+            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
                 ? value["YEAR COVERED"]
                 : value["RELEASED DATE"];
         }else{
-            value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
+            value["HOLD DATE"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
 	    
         tb_1[id] = value;
@@ -280,9 +280,9 @@ document.getElementById("file-process-bin").addEventListener("click", function()
         value["OFFICE"] = tmp_office + "" + value["OFFICE"];
         
         if (!!value["RELEASED DATE"]) {
-            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["RELEASED DATE"])
+            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
                 ? value["YEAR COVERED"]
-                : value["RELEASED DATE"];
+                : value["HOLD DATE"];
         }else{
             value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
@@ -323,9 +323,9 @@ document.getElementById("file-process-trigger").addEventListener("click", functi
         value["RELEASED DATE"] = released_date + "" + value["RELEASED DATE"];
 
         if (!!value["RELEASED DATE"]) {
-            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["RELEASED DATE"])
+            value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
                 ? value["YEAR COVERED"]
-                : value["RELEASED DATE"];
+                : value["HOLD DATE"];
         }else{
             value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
