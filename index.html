@@ -227,16 +227,17 @@ document.getElementById("file-email-bin").addEventListener("click", function(){
         var hold_on = tb_1[id]["HOLD DATE"] ?  tb_1[id]["HOLD DATE"] + "<br>" : '';
         
         value["FINDINGS/\nREASON"] = tmp + "" +  value["OFFICE"] +" --- " + value["FINDINGS/\nREASON"];
-        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
-        value["OFFICE"] = tmp_office + "" + value["OFFICE"];
-            
-	if (!!value["HOLD DATE"]) {
+	    
+ 	if (!!value["HOLD DATE"]) {
             value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
                 ? value["YEAR COVERED"]
                 : value["HOLD DATE"];
         }else{
-            value["HOLD DATE"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
+            value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
+	    
+        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
+        value["OFFICE"] = tmp_office + "" + value["OFFICE"];
 	    
         tb_1[id] = value;
 
@@ -276,17 +277,18 @@ document.getElementById("file-process-bin").addEventListener("click", function()
        // var temp_release = !!value["RELEASED DATE"] ? value["RELEASED DATE"] : '';
         
         value["FINDINGS/\nREASON"] = tmp + "" + value["FINDINGS/\nREASON"];
-        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
-        value["OFFICE"] = tmp_office + "" + value["OFFICE"];
-        
-        if (!!value["HOLD DATE"]) {
+
+	if (!!value["HOLD DATE"]) {
             value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
                 ? value["YEAR COVERED"]
                 : value["HOLD DATE"];
         }else{
             value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
-
+	    
+        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
+        value["OFFICE"] = tmp_office + "" + value["OFFICE"];
+        
         //value['YEAR COVERED'] = (tb_1[id]["YEAR COVERED"] >= value["RELEASED DATE"]) ? tb_1[id]["YEAR COVERED"] : value["RELEASED DATE"]; //tb_1[id]["YEAR COVERED"] && (tb_1[id]["YEAR COVERED"] >= value["RELEASED DATE"]) ?  value["YEAR COVERED"]  : value["RELEASED DATE"];
         value["RELEASED DATE"] = released_date + "" + value["RELEASED DATE"];
          
@@ -319,17 +321,17 @@ document.getElementById("file-process-trigger").addEventListener("click", functi
         var hold_on = tb_1[id]["HOLD DATE"] ?  tb_1[id]["HOLD DATE"] + "<br>" : '';
         var released_date = tb_1[id]["RELEASED DATE"] ?  tb_1[id]["RELEASED DATE"] + "<br>" : '';
         value["FINDINGS/\nREASON"] = tmp + "" + value["FINDINGS/\nREASON"];
-        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
-        value["RELEASED DATE"] = released_date + "" + value["RELEASED DATE"];
-
-        if (!!value["HOLD DATE"]) {
+	    
+ 	if (!!value["HOLD DATE"]) {
             value["YEAR COVERED"] = (!!value["YEAR COVERED"] && value["YEAR COVERED"] >= value["HOLD DATE"])
                 ? value["YEAR COVERED"]
                 : value["HOLD DATE"];
         }else{
             value["YEAR COVERED"] = !!tb_1[id]["YEAR COVERED"] ? tb_1[id]["YEAR COVERED"]  : '';
         }
-         
+	    
+        value["HOLD DATE"] = hold_on + "" + value["HOLD DATE"];
+        value["RELEASED DATE"] = released_date + "" + value["RELEASED DATE"];
         tb_1[id] = value;
 
     }
