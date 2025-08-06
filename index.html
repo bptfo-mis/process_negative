@@ -154,6 +154,21 @@ document.getElementById("file-one-trigger").addEventListener("click", function()
     table_one.import(customCSV, ".csv");
 });
 
+function replace_nonewline(value, data, type, params, column){
+    var str = '';
+    if(value){
+        var v = value.split("<br>");
+        counter =1;
+        for (var i = 0; i < v.length; i++){
+            v[i] = v[i];
+            counter++;
+        }
+        str = v.join(" ");
+        //str = value.replace(/<br>/g, "\n----------------\n");
+    }
+    return str;
+}
+	
 function replace_newline(value, data, type, params, column){
     var str = '';
     if(value){
@@ -345,7 +360,7 @@ document.getElementById("file-process-trigger").addEventListener("click", functi
     table_update.setData(master_tb);
     table_update.updateColumnDefinition("HOLD DATE", {accessorDownload:replace_newline});
     table_update.updateColumnDefinition("FINDINGS/\nREASON", {accessorDownload:replace_newline});
-    table_update.updateColumnDefinition("OFFICE", {accessorDownload:replace_newline});
+    table_update.updateColumnDefinition("OFFICE", {accessorDownload:replace_nonewline});
     table_update.updateColumnDefinition("RELEASED DATE", {accessorDownload:replace_newline});
 
 
